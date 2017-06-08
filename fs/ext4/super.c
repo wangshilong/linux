@@ -5268,8 +5268,8 @@ static int ext4_statfs(struct dentry *dentry, struct kstatfs *buf)
  * Process 1                         Process 2
  * ext4_create()                     quota_sync()
  *   jbd2_journal_start()                  write_dquot()
- *   dquot_initialize()                         down(dqio_mutex)
- *     down(dqio_mutex)                    jbd2_journal_start()
+ *   dquot_initialize()                         down(dqio_sem)
+ *     down(dqio_sem)                           jbd2_journal_start()
  *
  */
 
