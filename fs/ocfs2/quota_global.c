@@ -443,13 +443,18 @@ static int __ocfs2_global_write_info(struct super_block *sb, int type)
 int ocfs2_global_write_info(struct super_block *sb, int type)
 {
 	int err;
-	struct ocfs2_mem_dqinfo *info = sb_dqinfo(sb, type)->dqi_priv;
+	struct quota_info *dqopt = sb_dqopt(sb);
+	struct ocfs2_mem_dqinfo *info = dqopt->info[type].dqi_priv;
 
+	down_write(&dqopt->dqio_sem);
 	err = ocfs2_qinfo_lock(info, 1);
-	if (err < 0)
+	if (err < 0) {
+		up_write(&dqopt->dqio_sem);
 		return err;
+	}
 	err = __ocfs2_global_write_info(sb, type);
 	ocfs2_qinfo_unlock(info, 1);
+	up_write(&dqopt->dqio_sem);
 	return err;
 }
 
