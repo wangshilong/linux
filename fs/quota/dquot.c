@@ -355,19 +355,13 @@ int dquot_mark_dquot_dirty(struct dquot *dquot)
 EXPORT_SYMBOL(dquot_mark_dquot_dirty);
 
 /* Dirtify all the dquots - this can block when journalling */
-static inline int mark_all_dquot_dirty(struct dquot * const *dquot)
+static void mark_all_dquot_dirty(struct dquot * const *dquot)
 {
-	int ret, err, cnt;
+	int cnt;
 
-	ret = err = 0;
-	for (cnt = 0; cnt < MAXQUOTAS; cnt++) {
+	for (cnt = 0; cnt < MAXQUOTAS; cnt++)
 		if (dquot[cnt])
-			/* Even in case of error we have to continue */
-			ret = mark_dquot_dirty(dquot[cnt]);
-		if (!err)
-			err = ret;
-	}
-	return err;
+			mark_dquot_dirty(dquot[cnt]);
 }
 
 static inline void dqput_all(struct dquot **dquot)
