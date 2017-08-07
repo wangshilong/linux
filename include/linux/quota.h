@@ -298,6 +298,7 @@ struct dquot {
 	struct list_head dq_free;	/* Free list element */
 	struct list_head dq_dirty;	/* List of dirty dquots */
 	struct mutex dq_lock;		/* dquot IO lock */
+	spinlock_t dq_dqb_lock;		/* Lock protecting dq_dqb changes */
 	atomic_t dq_count;		/* Use count */
 	struct super_block *dq_sb;	/* superblock this applies to */
 	struct kqid dq_id;		/* ID this applies to (uid, gid, projid) */
